@@ -3,6 +3,7 @@
 # - rework files
 %define		module	scipy
 Summary:	A library of scientific tools
+Summary(pl):	Biblioteka narzêdzi naukowych
 Name:		python-%{module}
 Version:	0.3.2
 Release:	1
@@ -24,6 +25,12 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 SciPy is an open source library of scientific tools for Python. SciPy
 supplements the popular Numeric module, gathering a variety of high
 level science and engineering modules together as a single package.
+
+%description -l pl
+SciPy to biblioteka narzêdzi naukowych z otwartymi ¼ród³ami dla
+Pythona. SciPy uzupe³nia popularny modu³ Numeric, gromadz±c razem
+wiele wysokopoziomowych modu³ów naukowych i in¿ynierskich w jeden
+pakiet.
 
 %prep
 %setup -q -n SciPy_complete-%{version}

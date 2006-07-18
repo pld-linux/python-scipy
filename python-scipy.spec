@@ -12,12 +12,12 @@ Group:		Development/Languages/Python
 Source0:	http://www.scipy.org/download/scipy/src/SciPy_complete-%{version}.tar.gz
 # Source0-md5:	5ae2280ab2c4c653cb0ff8479e81284a
 URL:		http://www.scipy.org/
-BuildRequires:	python
-BuildRequires:	f2py
-BuildRequires:	python-devel >= 1:2.3
-BuildRequires:	python-numpy-devel
-BuildRequires:	gcc-g77
 BuildRequires:	X11-devel
+BuildRequires:	f2py
+BuildRequires:	python
+BuildRequires:	python-Numeric-devel
+BuildRequires:	python-devel >= 1:2.3
+BuildRequires:	gcc-g77
 %pyrequires_eq	python-modules
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 

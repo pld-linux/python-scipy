@@ -19,6 +19,8 @@ BuildRequires:	f2py
 BuildRequires:	python
 BuildRequires:	python-Numeric-devel
 BuildRequires:	python-devel >= 1:2.3
+BuildRequires:	python-numpy >= 1:1.0
+BuildRequires:	python-numpy-numarray >= 1:1.0
 BuildRequires:	gcc-g77
 %pyrequires_eq	python-modules
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)

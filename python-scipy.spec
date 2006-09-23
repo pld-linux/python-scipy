@@ -5,14 +5,16 @@
 Summary:	A library of scientific tools
 Summary(pl):	Biblioteka narzêdzi naukowych
 Name:		python-%{module}
-Version:	0.3.2
+Version:	0.5.1
 Release:	1
 License:	BSD
 Group:		Development/Languages/Python
-Source0:	http://www.scipy.org/download/scipy/src/SciPy_complete-%{version}.tar.gz
-# Source0-md5:	5ae2280ab2c4c653cb0ff8479e81284a
+Source0:	http://heanet.dl.sourceforge.net/sourceforge/scipy/scipy-%{version}.tar.gz
+# Source0-md5:	48442a427f0556ad2ad1721dd62e401c
 URL:		http://www.scipy.org/
 BuildRequires:	X11-devel
+BuildRequires:	blas-devel
+BuildRequires:	lapack-devel
 BuildRequires:	f2py
 BuildRequires:	python
 BuildRequires:	python-Numeric-devel
@@ -33,7 +35,7 @@ wiele wysokopoziomowych modu³ów naukowych i in¿ynierskich w jeden
 pakiet.
 
 %prep
-%setup -q -n SciPy_complete-%{version}
+%setup -q -n scipy-%{version}
 
 %build
 CFLAGS="%{rpmcflags}"

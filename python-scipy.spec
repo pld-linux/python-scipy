@@ -3,7 +3,7 @@
 # - rework files
 %define		module	scipy
 Summary:	A library of scientific tools
-Summary(pl.UTF-8):   Biblioteka narzędzi naukowych
+Summary(pl.UTF-8):	Biblioteka narzędzi naukowych
 Name:		python-%{module}
 Version:	0.5.1
 Release:	1

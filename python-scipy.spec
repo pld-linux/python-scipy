@@ -21,6 +21,7 @@ BuildRequires:	python-devel >= 1:2.3
 BuildRequires:	python-numpy >= 1:1.5.1-3
 BuildRequires:	python-numpy-numarray-devel >= 1:1.5.1-3
 %pyrequires_eq	python-modules
+Suggests:	python-PIL
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description

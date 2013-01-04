@@ -4,12 +4,12 @@
 Summary:	A library of scientific tools
 Summary(pl.UTF-8):	Biblioteka narzędzi naukowych
 Name:		python-%{module}
-Version:	0.9.0
-Release:	3
+Version:	0.11.0
+Release:	1
 License:	BSD
 Group:		Development/Languages/Python
 Source0:	http://heanet.dl.sourceforge.net/sourceforge/scipy/scipy-%{version}.tar.gz
-# Source0-md5:	ebfef6e8e82d15c875a4ee6a46d4e1cd
+# Source0-md5:	842c81d35fd63579c41a8ca21a2419b9
 URL:		http://www.scipy.org/
 BuildRequires:	UMFPACK-devel
 BuildRequires:	blas-devel
@@ -21,6 +21,7 @@ BuildRequires:	python-devel >= 1:2.3
 BuildRequires:	python-numpy >= 1:1.5.1-3
 BuildRequires:	python-numpy-numarray-devel >= 1:1.5.1-3
 %pyrequires_eq	python-modules
+BuildRequires:	swig-python
 Suggests:	python-PIL
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -50,8 +51,6 @@ install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 python setup.py install \
 	--root=$RPM_BUILD_ROOT
 
-mv $RPM_BUILD_ROOT%{py_sitedir}/%{module}/maxentropy/examples \
-	$RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}/maxentropy
 mv $RPM_BUILD_ROOT%{py_sitedir}/%{module}/weave/examples \
 	$RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}/weave
 
@@ -102,6 +101,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py_sitedir}/%{module}/io/matlab/*.so
 %{py_sitedir}/%{module}/io/matlab/*.py
 %{py_sitedir}/%{module}/io/matlab/*.py[co]
+%dir %{py_sitedir}/%{module}/io/harwell_boeing
+%{py_sitedir}/%{module}/io/harwell_boeing/*.py
+%{py_sitedir}/%{module}/io/harwell_boeing/*.py[co]
 %dir %{py_sitedir}/%{module}/lib
 %{py_sitedir}/%{module}/lib/*.py
 %{py_sitedir}/%{module}/lib/*.py[co]
@@ -117,9 +119,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py_sitedir}/%{module}/linalg/*.so
 %{py_sitedir}/%{module}/linalg/*.py
 %{py_sitedir}/%{module}/linalg/*.py[co]
-%dir %{py_sitedir}/%{module}/maxentropy
-%{py_sitedir}/%{module}/maxentropy/*.py
-%{py_sitedir}/%{module}/maxentropy/*.py[co]
 %dir %{py_sitedir}/%{module}/misc
 %{py_sitedir}/%{module}/misc/lena.dat
 %{py_sitedir}/%{module}/misc/*.py
@@ -146,6 +145,10 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{py_sitedir}/%{module}/sparse/linalg
 %{py_sitedir}/%{module}/sparse/linalg/*.py
 %{py_sitedir}/%{module}/sparse/linalg/*.py[co]
+%dir %{py_sitedir}/%{module}/sparse/csgraph
+%{py_sitedir}/%{module}/sparse/csgraph/*.py
+%{py_sitedir}/%{module}/sparse/csgraph/*.py[co]
+%attr(755,root,root) %{py_sitedir}/%{module}/sparse/csgraph/*.so
 %dir %{py_sitedir}/%{module}/sparse/linalg/dsolve
 %attr(755,root,root) %{py_sitedir}/%{module}/sparse/linalg/dsolve/*.so
 %{py_sitedir}/%{module}/sparse/linalg/dsolve/*.py

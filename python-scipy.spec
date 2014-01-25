@@ -20,6 +20,7 @@ BuildRequires:	python
 BuildRequires:	python-devel >= 1:2.3
 BuildRequires:	python-numpy >= 1:1.5.1-3
 BuildRequires:	python-numpy-numarray-devel >= 1:1.5.1-3
+BuildRequires:	python-numpy-oldnumeric >= 1:1.5.1-3
 %pyrequires_eq	python-modules
 BuildRequires:	swig-python
 Suggests:	python-PIL

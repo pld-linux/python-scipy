@@ -10,7 +10,7 @@ Summary:	A library of scientific tools
 Summary(pl.UTF-8):	Biblioteka narzędzi naukowych
 Name:		python-%{module}
 Version:	0.13.2
-Release:	2
+Release:	3
 License:	BSD
 Group:		Development/Languages/Python
 Source0:	http://heanet.dl.sourceforge.net/sourceforge/scipy/scipy-%{version}.tar.gz
@@ -78,6 +78,9 @@ pakiet.
 %build
 CFLAGS="%{rpmcflags}"
 export CFLAGS
+export BLAS=%{_libdir}
+export LAPACK=%{_libdir}
+export UMFPACK=%{_libdir}
 
 %if %{with python2}
 %{__python} setup.py build --fcompiler=gnu95 --build-base build-2
@@ -89,6 +92,9 @@ export CFLAGS
 
 %install
 rm -rf $RPM_BUILD_ROOT
+export BLAS=%{_libdir}
+export LAPACK=%{_libdir}
+export UMFPACK=%{_libdir}
 
 %if %{with python2}
 %{__python} setup.py \

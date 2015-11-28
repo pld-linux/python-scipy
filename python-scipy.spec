@@ -83,11 +83,11 @@ export LAPACK=%{_libdir}
 export UMFPACK=%{_libdir}
 
 %if %{with python2}
-%{__python} setup.py build --fcompiler=gnu95 --build-base build-2
+%py_build --fcompiler=gnu95 --build-base build-2
 %endif
 
 %if %{with python3}
-%{__python3} setup.py build --fcompiler=gnu95 --build-base build-3
+%py3_build --fcompiler=gnu95 --build-base build-3
 %endif
 
 %install
@@ -97,11 +97,7 @@ export LAPACK=%{_libdir}
 export UMFPACK=%{_libdir}
 
 %if %{with python2}
-%{__python} setup.py \
-	build --build-base build-2 \
-	install --skip-build \
-	--optimize=2 \
-	--root=$RPM_BUILD_ROOT
+%py_install
 
 install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 %{__mv} $RPM_BUILD_ROOT%{py_sitedir}/%{module}/weave/examples \
@@ -115,11 +111,7 @@ install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 %endif
 
 %if %{with python3}
-%{__python3} setup.py \
-	build --build-base build-3 \
-	install --skip-build \
-	--optimize=2 \
-	--root=$RPM_BUILD_ROOT
+%py3_install
 
 %{__rm} $RPM_BUILD_ROOT%{py3_sitedir}/%{module}/*.txt
 %{__rm} -r $RPM_BUILD_ROOT%{py3_sitedir}/%{module}/*/{benchmarks,tests}

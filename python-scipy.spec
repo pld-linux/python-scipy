@@ -16,6 +16,7 @@ Group:		Development/Languages/Python
 Source0:	http://heanet.dl.sourceforge.net/sourceforge/scipy/scipy-%{version}.tar.gz
 # Source0-md5:	fcd110802b0bf3505ba567cf831566e1
 URL:		http://www.scipy.org/
+BuildRequires:	rpmbuild(macros) >= 1.710
 BuildRequires:	UMFPACK-devel
 BuildRequires:	blas-devel
 BuildRequires:	gcc-fortran

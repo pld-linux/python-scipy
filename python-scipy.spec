@@ -10,7 +10,7 @@ Summary:	A library of scientific tools
 Summary(pl.UTF-8):	Biblioteka narzędzi naukowych
 Name:		python-%{module}
 Version:	0.18.1
-Release:	0.1
+Release:	1
 License:	BSD
 Group:		Development/Languages/Python
 Source0:	https://github.com/scipy/scipy/releases/download/v%{version}/%{module}-%{version}.tar.xz
@@ -80,11 +80,26 @@ export LAPACK=%{_libdir}
 export UMFPACK=%{_libdir}
 
 %if %{with python2}
-%py_build
+# %%py_build
+# exporting LDFLAGS breaks build, so open code macro:
+CFLAGS="${CFLAGS:-%rpmcppflags %rpmcflags}"; export CFLAGS; \
+CXXFLAGS="${CXXFLAGS:-%rpmcppflags %rpmcxxflags}"; export CXXFLAGS; \
+%{?__cc:CC="%{__cc}"; export CC;} \
+%{?__cxx:CXX="%{__cxx}"; export CXX;} \
+%{__python} setup.py \
+	build --build-base=build-2
+
 %endif
 
 %if %{with python3}
-%py3_build
+# %%py3_build
+# exporting LDFLAGS breaks build, so open code macro:
+CFLAGS="${CFLAGS:-%rpmcppflags %rpmcflags}"; export CFLAGS; \
+CXXFLAGS="${CXXFLAGS:-%rpmcppflags %rpmcxxflags}"; export CXXFLAGS; \
+%{?__cc:CC="%{__cc}"; export CC;} \
+%{?__cxx:CXX="%{__cxx}"; export CXX;} \
+%{__python3} setup.py build \
+	--build-base=build-3
 %endif
 
 %install
@@ -123,10 +138,11 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with python2}
 %files
 %defattr(644,root,root,755)
-%doc INSTALL.txt doc/README.txt THANKS.txt
+%doc INSTALL.rst.txt doc/README.txt THANKS.txt
 %dir %{py_sitedir}/%{module}
 %{py_sitedir}/%{module}/*.py
 %{py_sitedir}/%{module}/*.py[co]
+%{py_sitedir}/%{module}/*.pxd
 %dir %{py_sitedir}/%{module}/_build_utils
 %{py_sitedir}/%{module}/_build_utils/*.py
 %{py_sitedir}/%{module}/_build_utils/*.py[co]
@@ -162,25 +178,17 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{py_sitedir}/%{module}/io/harwell_boeing
 %{py_sitedir}/%{module}/io/harwell_boeing/*.py
 %{py_sitedir}/%{module}/io/harwell_boeing/*.py[co]
-%dir %{py_sitedir}/%{module}/lib
-%{py_sitedir}/%{module}/lib/*.py
-%{py_sitedir}/%{module}/lib/*.py[co]
-%dir %{py_sitedir}/%{module}/lib/blas
-%attr(755,root,root) %{py_sitedir}/%{module}/lib/blas/*.so
-%{py_sitedir}/%{module}/lib/blas/*.py
-%{py_sitedir}/%{module}/lib/blas/*.py[co]
-%dir %{py_sitedir}/%{module}/lib/lapack
-%attr(755,root,root) %{py_sitedir}/%{module}/lib/lapack/*.so
-%{py_sitedir}/%{module}/lib/lapack/*.py
-%{py_sitedir}/%{module}/lib/lapack/*.py[co]
+%dir %{py_sitedir}/%{module}/_lib
+%{py_sitedir}/%{module}/_lib/*.py
+%{py_sitedir}/%{module}/_lib/*.py[co]
 %dir %{py_sitedir}/%{module}/linalg
+%dir %{py_sitedir}/%{module}/linalg/*.pxd
 %attr(755,root,root) %{py_sitedir}/%{module}/linalg/*.so
 %{py_sitedir}/%{module}/linalg/*.py
 %{py_sitedir}/%{module}/linalg/*.py[co]
 %dir %{py_sitedir}/%{module}/misc
 %{py_sitedir}/%{module}/misc/ascent.dat
 %{py_sitedir}/%{module}/misc/face.dat
-%{py_sitedir}/%{module}/misc/lena.dat
 %{py_sitedir}/%{module}/misc/*.py
 %{py_sitedir}/%{module}/misc/*.py[co]
 %dir %{py_sitedir}/%{module}/ndimage
@@ -195,11 +203,16 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py_sitedir}/%{module}/optimize/*.so
 %{py_sitedir}/%{module}/optimize/*.py
 %{py_sitedir}/%{module}/optimize/*.py[co]
+%dir %{py_sitedir}/%{module}/optimize/_lsq
+%attr(755,root,root) %{py_sitedir}/%{module}/optimize/_lsq/*.so
+%{py_sitedir}/%{module}/optimize/_lsq/*.py
+%{py_sitedir}/%{module}/optimize/_lsq/*.py[co]
 %dir %{py_sitedir}/%{module}/signal
 %attr(755,root,root) %{py_sitedir}/%{module}/signal/*.so
 %{py_sitedir}/%{module}/signal/*.py
 %{py_sitedir}/%{module}/signal/*.py[co]
 %dir %{py_sitedir}/%{module}/sparse
+%attr(755,root,root) %{py_sitedir}/%{module}/sparse/*.so
 %{py_sitedir}/%{module}/sparse/*.py
 %{py_sitedir}/%{module}/sparse/*.py[co]
 %dir %{py_sitedir}/%{module}/sparse/linalg
@@ -213,10 +226,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py_sitedir}/%{module}/sparse/linalg/dsolve/*.so
 %{py_sitedir}/%{module}/sparse/linalg/dsolve/*.py
 %{py_sitedir}/%{module}/sparse/linalg/dsolve/*.py[co]
-%dir %{py_sitedir}/%{module}/sparse/linalg/dsolve/umfpack
-%attr(755,root,root) %{py_sitedir}/%{module}/sparse/linalg/dsolve/umfpack/*.so
-%{py_sitedir}/%{module}/sparse/linalg/dsolve/umfpack/*.py
-%{py_sitedir}/%{module}/sparse/linalg/dsolve/umfpack/*.py[co]
 %dir %{py_sitedir}/%{module}/sparse/linalg/eigen
 %{py_sitedir}/%{module}/sparse/linalg/eigen/*.py
 %{py_sitedir}/%{module}/sparse/linalg/eigen/*.py[co]
@@ -231,10 +240,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py_sitedir}/%{module}/sparse/linalg/isolve/*.so
 %{py_sitedir}/%{module}/sparse/linalg/isolve/*.py
 %{py_sitedir}/%{module}/sparse/linalg/isolve/*.py[co]
-%dir %{py_sitedir}/%{module}/sparse/sparsetools
-%attr(755,root,root) %{py_sitedir}/%{module}/sparse/sparsetools/*.so
-%{py_sitedir}/%{module}/sparse/sparsetools/*.py
-%{py_sitedir}/%{module}/sparse/sparsetools/*.py[co]
 %dir %{py_sitedir}/%{module}/spatial
 %attr(755,root,root) %{py_sitedir}/%{module}/spatial/*.so
 %{py_sitedir}/%{module}/spatial/*.py
@@ -243,6 +248,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py_sitedir}/%{module}/special/*.so
 %{py_sitedir}/%{module}/special/*.py
 %{py_sitedir}/%{module}/special/*.py[co]
+%dir %{py_sitedir}/%{module}/special/_precompute
+%{py_sitedir}/%{module}/special/_precompute/*.py
+%{py_sitedir}/%{module}/special/_precompute/*.py[co]
 %dir %{py_sitedir}/%{module}/stats
 %attr(755,root,root) %{py_sitedir}/%{module}/stats/*.so
 %{py_sitedir}/%{module}/stats/*.py
@@ -261,10 +269,11 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with python3}
 %files -n python3-%{module}
 %defattr(644,root,root,755)
-%doc INSTALL.txt doc/README.txt THANKS.txt
+%doc INSTALL.rst.txt doc/README.txt THANKS.txt
 %dir %{py3_sitedir}/%{module}
 %{py3_sitedir}/%{module}/*.py
 %{py3_sitedir}/%{module}/__pycache__
+%{py3_sitedir}/%{module}/*.pxd
 %dir %{py3_sitedir}/%{module}/_build_utils
 %{py3_sitedir}/%{module}/_build_utils/*.py
 %{py3_sitedir}/%{module}/_build_utils/__pycache__
@@ -300,25 +309,17 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{py3_sitedir}/%{module}/io/harwell_boeing
 %{py3_sitedir}/%{module}/io/harwell_boeing/*.py
 %{py3_sitedir}/%{module}/io/harwell_boeing/__pycache__
-%dir %{py3_sitedir}/%{module}/lib
-%{py3_sitedir}/%{module}/lib/*.py
-%{py3_sitedir}/%{module}/lib/__pycache__
-%dir %{py3_sitedir}/%{module}/lib/blas
-%attr(755,root,root) %{py3_sitedir}/%{module}/lib/blas/*.so
-%{py3_sitedir}/%{module}/lib/blas/*.py
-%{py3_sitedir}/%{module}/lib/blas/__pycache__
-%dir %{py3_sitedir}/%{module}/lib/lapack
-%attr(755,root,root) %{py3_sitedir}/%{module}/lib/lapack/*.so
-%{py3_sitedir}/%{module}/lib/lapack/*.py
-%{py3_sitedir}/%{module}/lib/lapack/__pycache__
+%dir %{py3_sitedir}/%{module}/_lib
+%{py3_sitedir}/%{module}/_lib/*.py
+%{py3_sitedir}/%{module}/_lib/__pycache__
 %dir %{py3_sitedir}/%{module}/linalg
+ %{py3_sitedir}/%{module}/linalg/*.pxd
 %attr(755,root,root) %{py3_sitedir}/%{module}/linalg/*.so
 %{py3_sitedir}/%{module}/linalg/*.py
 %{py3_sitedir}/%{module}/linalg/__pycache__
 %dir %{py3_sitedir}/%{module}/misc
 %{py3_sitedir}/%{module}/misc/ascent.dat
 %{py3_sitedir}/%{module}/misc/face.dat
-%{py3_sitedir}/%{module}/misc/lena.dat
 %{py3_sitedir}/%{module}/misc/*.py
 %{py3_sitedir}/%{module}/misc/__pycache__
 %dir %{py3_sitedir}/%{module}/ndimage
@@ -333,11 +334,16 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py3_sitedir}/%{module}/optimize/*.so
 %{py3_sitedir}/%{module}/optimize/*.py
 %{py3_sitedir}/%{module}/optimize/__pycache__
+%dir %{py3_sitedir}/%{module}/optimize/_lsq
+%attr(755,root,root) %{py3_sitedir}/%{module}/optimize/_lsq/*.so
+%{py3_sitedir}/%{module}/optimize/_lsq/*.py
+%{py3_sitedir}/%{module}/optimize/_lsq/__pycache__
 %dir %{py3_sitedir}/%{module}/signal
 %attr(755,root,root) %{py3_sitedir}/%{module}/signal/*.so
 %{py3_sitedir}/%{module}/signal/*.py
 %{py3_sitedir}/%{module}/signal/__pycache__
 %dir %{py3_sitedir}/%{module}/sparse
+%attr(755,root,root) %{py3_sitedir}/%{module}/sparse/*.so
 %{py3_sitedir}/%{module}/sparse/*.py
 %{py3_sitedir}/%{module}/sparse/__pycache__
 %dir %{py3_sitedir}/%{module}/sparse/linalg
@@ -351,10 +357,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py3_sitedir}/%{module}/sparse/linalg/dsolve/*.so
 %{py3_sitedir}/%{module}/sparse/linalg/dsolve/*.py
 %{py3_sitedir}/%{module}/sparse/linalg/dsolve/__pycache__
-%dir %{py3_sitedir}/%{module}/sparse/linalg/dsolve/umfpack
-%attr(755,root,root) %{py3_sitedir}/%{module}/sparse/linalg/dsolve/umfpack/*.so
-%{py3_sitedir}/%{module}/sparse/linalg/dsolve/umfpack/*.py
-%{py3_sitedir}/%{module}/sparse/linalg/dsolve/umfpack/__pycache__
 %dir %{py3_sitedir}/%{module}/sparse/linalg/eigen
 %{py3_sitedir}/%{module}/sparse/linalg/eigen/*.py
 %{py3_sitedir}/%{module}/sparse/linalg/eigen/__pycache__
@@ -369,10 +371,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py3_sitedir}/%{module}/sparse/linalg/isolve/*.so
 %{py3_sitedir}/%{module}/sparse/linalg/isolve/*.py
 %{py3_sitedir}/%{module}/sparse/linalg/isolve/__pycache__
-%dir %{py3_sitedir}/%{module}/sparse/sparsetools
-%attr(755,root,root) %{py3_sitedir}/%{module}/sparse/sparsetools/*.so
-%{py3_sitedir}/%{module}/sparse/sparsetools/*.py
-%{py3_sitedir}/%{module}/sparse/sparsetools/__pycache__
 %dir %{py3_sitedir}/%{module}/spatial
 %attr(755,root,root) %{py3_sitedir}/%{module}/spatial/*.so
 %{py3_sitedir}/%{module}/spatial/*.py
@@ -381,6 +379,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py3_sitedir}/%{module}/special/*.so
 %{py3_sitedir}/%{module}/special/*.py
 %{py3_sitedir}/%{module}/special/__pycache__
+%dir %{py3_sitedir}/%{module}/special/_precompute
+%{py3_sitedir}/%{module}/special/_precompute/*.py
+%{py3_sitedir}/%{module}/special/_precompute/__pycache__
 %dir %{py3_sitedir}/%{module}/stats
 %attr(755,root,root) %{py3_sitedir}/%{module}/stats/*.so
 %{py3_sitedir}/%{module}/stats/*.py

@@ -9,12 +9,12 @@
 Summary:	A library of scientific tools
 Summary(pl.UTF-8):	Biblioteka narzędzi naukowych
 Name:		python-%{module}
-Version:	0.13.2
-Release:	6
+Version:	0.18.1
+Release:	0.1
 License:	BSD
 Group:		Development/Languages/Python
-Source0:	http://heanet.dl.sourceforge.net/sourceforge/scipy/scipy-%{version}.tar.gz
-# Source0-md5:	fcd110802b0bf3505ba567cf831566e1
+Source0:	https://github.com/scipy/scipy/releases/download/v%{version}/%{module}-%{version}.tar.xz
+# Source0-md5:	ed8394c19d8445f16ae068b03df0ca23
 URL:		http://www.scipy.org/
 BuildRequires:	rpmbuild(macros) >= 1.710
 BuildRequires:	UMFPACK-devel
@@ -27,8 +27,6 @@ BuildRequires:	python
 BuildRequires:	python-devel >= 1:2.3
 BuildRequires:	python-numpy >= 1:1.5.1-3
 BuildRequires:	python-numpy-devel >= 1:1.5.1-3
-BuildRequires:	python-numpy-numarray-devel >= 1:1.5.1-3
-BuildRequires:	python-numpy-oldnumeric >= 1:1.5.1-3
 %pyrequires_eq	python-modules
 %endif
 %if %{with python3}
@@ -38,8 +36,6 @@ BuildRequires:	python3-devel
 BuildRequires:	python3-distribute
 BuildRequires:	python3-numpy >= 1:1.5.1-3
 BuildRequires:	python3-numpy-devel >= 1:1.5.1-3
-BuildRequires:	python3-numpy-numarray-devel >= 1:1.5.1-3
-BuildRequires:	python3-numpy-oldnumeric >= 1:1.5.1-3
 %endif
 BuildRequires:	swig-python
 Suggests:	python-PIL
@@ -84,11 +80,11 @@ export LAPACK=%{_libdir}
 export UMFPACK=%{_libdir}
 
 %if %{with python2}
-%py_build --fcompiler=gnu95 --build-base build-2
+%py_build
 %endif
 
 %if %{with python3}
-%py3_build --fcompiler=gnu95 --build-base build-3
+%py3_build
 %endif
 
 %install
@@ -105,8 +101,8 @@ install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 	$RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}/weave
 
 %{__rm} $RPM_BUILD_ROOT%{py_sitedir}/%{module}/*.txt
-%{__rm} -r $RPM_BUILD_ROOT%{py_sitedir}/%{module}/*/{benchmarks,tests,doc}
-%{__rm} -r $RPM_BUILD_ROOT%{py_sitedir}/%{module}/*/*/{benchmarks,tests}
+%{__rm} -r $RPM_BUILD_ROOT%{py_sitedir}/%{module}/*/{tests,doc}
+%{__rm} -r $RPM_BUILD_ROOT%{py_sitedir}/%{module}/*/*/tests
 %{__rm} -r $RPM_BUILD_ROOT%{py_sitedir}/%{module}/*/*/*/tests
 %{__rm} -r $RPM_BUILD_ROOT%{py_sitedir}/%{module}/*/*/*/*/tests
 %endif
@@ -115,8 +111,8 @@ install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 %py3_install
 
 %{__rm} $RPM_BUILD_ROOT%{py3_sitedir}/%{module}/*.txt
-%{__rm} -r $RPM_BUILD_ROOT%{py3_sitedir}/%{module}/*/{benchmarks,tests}
-%{__rm} -r $RPM_BUILD_ROOT%{py3_sitedir}/%{module}/*/*/{benchmarks,tests}
+%{__rm} -r $RPM_BUILD_ROOT%{py3_sitedir}/%{module}/*/tests
+%{__rm} -r $RPM_BUILD_ROOT%{py3_sitedir}/%{module}/*/*/tests
 %{__rm} -r $RPM_BUILD_ROOT%{py3_sitedir}/%{module}/*/*/*/tests
 %{__rm} -r $RPM_BUILD_ROOT%{py3_sitedir}/%{module}/*/*/*/*/tests
 %endif

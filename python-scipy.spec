@@ -10,7 +10,7 @@ Summary:	A library of scientific tools
 Summary(pl.UTF-8):	Biblioteka narzędzi naukowych
 Name:		python-%{module}
 Version:	0.18.1
-Release:	1
+Release:	2
 License:	BSD
 Group:		Development/Languages/Python
 Source0:	https://github.com/scipy/scipy/releases/download/v%{version}/%{module}-%{version}.tar.xz

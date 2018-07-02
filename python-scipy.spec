@@ -9,12 +9,12 @@
 Summary:	A library of scientific tools
 Summary(pl.UTF-8):	Biblioteka narzędzi naukowych
 Name:		python-%{module}
-Version:	0.18.1
-Release:	4
+Version:	1.1.0
+Release:	1
 License:	BSD
 Group:		Development/Languages/Python
-Source0:	https://github.com/scipy/scipy/releases/download/v%{version}/%{module}-%{version}.tar.xz
-# Source0-md5:	ed8394c19d8445f16ae068b03df0ca23
+Source0:	https://github.com/scipy/scipy/releases/download/v%{version}/%{module}-%{version}.tar.gz
+# Source0-md5:	aa6bcc85276b6f25e17bcfc4dede8718
 URL:		http://www.scipy.org/
 BuildRequires:	rpmbuild(macros) >= 1.710
 BuildRequires:	UMFPACK-devel
@@ -111,12 +111,8 @@ export UMFPACK=%{_libdir}
 %if %{with python2}
 %py_install
 
-install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
-%{__mv} $RPM_BUILD_ROOT%{py_sitedir}/%{module}/weave/examples \
-	$RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}/weave
-
 %{__rm} $RPM_BUILD_ROOT%{py_sitedir}/%{module}/*.txt
-%{__rm} -r $RPM_BUILD_ROOT%{py_sitedir}/%{module}/*/{tests,doc}
+%{__rm} -r $RPM_BUILD_ROOT%{py_sitedir}/%{module}/*/tests
 %{__rm} -r $RPM_BUILD_ROOT%{py_sitedir}/%{module}/*/*/tests
 %{__rm} -r $RPM_BUILD_ROOT%{py_sitedir}/%{module}/*/*/*/tests
 %{__rm} -r $RPM_BUILD_ROOT%{py_sitedir}/%{module}/*/*/*/*/tests
@@ -161,6 +157,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py_sitedir}/%{module}/integrate/*.so
 %{py_sitedir}/%{module}/integrate/*.py
 %{py_sitedir}/%{module}/integrate/*.py[co]
+%dir %{py_sitedir}/%{module}/integrate/_ivp
+%{py_sitedir}/%{module}/integrate/_ivp/*.py
+%{py_sitedir}/%{module}/integrate/_ivp/*.py[co]
 %dir %{py_sitedir}/%{module}/interpolate
 %attr(755,root,root) %{py_sitedir}/%{module}/interpolate/*.so
 %{py_sitedir}/%{module}/interpolate/*.py
@@ -168,6 +167,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{py_sitedir}/%{module}/io
 %{py_sitedir}/%{module}/io/*.py
 %{py_sitedir}/%{module}/io/*.py[co]
+%attr(755,root,root) %{py_sitedir}/%{module}/io/_test_fortran.so
 %dir %{py_sitedir}/%{module}/io/arff
 %{py_sitedir}/%{module}/io/arff/*.py
 %{py_sitedir}/%{module}/io/arff/*.py[co]
@@ -181,6 +181,10 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{py_sitedir}/%{module}/_lib
 %{py_sitedir}/%{module}/_lib/*.py
 %{py_sitedir}/%{module}/_lib/*.py[co]
+%attr(755,root,root) %{py_sitedir}/%{module}/_lib/_ccallback_c.so
+%attr(755,root,root) %{py_sitedir}/%{module}/_lib/_fpumode.so
+%attr(755,root,root) %{py_sitedir}/%{module}/_lib/_test_ccallback.so
+%attr(755,root,root) %{py_sitedir}/%{module}/_lib/messagestream.so
 %dir %{py_sitedir}/%{module}/linalg
 %dir %{py_sitedir}/%{module}/linalg/*.pxd
 %attr(755,root,root) %{py_sitedir}/%{module}/linalg/*.so
@@ -207,10 +211,21 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py_sitedir}/%{module}/optimize/_lsq/*.so
 %{py_sitedir}/%{module}/optimize/_lsq/*.py
 %{py_sitedir}/%{module}/optimize/_lsq/*.py[co]
+%dir %{py_sitedir}/%{module}/optimize/_trlib
+%{py_sitedir}/%{module}/optimize/_trlib/*.py
+%{py_sitedir}/%{module}/optimize/_trlib/*.py[co]
+%attr(755,root,root) %{py_sitedir}/%{module}/optimize/_trlib/*.so
+%dir %{py_sitedir}/%{module}/optimize/_trustregion_constr
+%{py_sitedir}/%{module}/optimize/_trustregion_constr/*.py
+%{py_sitedir}/%{module}/optimize/_trustregion_constr/*.py[co]
+
 %dir %{py_sitedir}/%{module}/signal
 %attr(755,root,root) %{py_sitedir}/%{module}/signal/*.so
 %{py_sitedir}/%{module}/signal/*.py
 %{py_sitedir}/%{module}/signal/*.py[co]
+%dir %{py_sitedir}/%{module}/signal/windows
+%{py_sitedir}/%{module}/signal/windows/*.py
+%{py_sitedir}/%{module}/signal/windows/*.py[co]
 %dir %{py_sitedir}/%{module}/sparse
 %attr(755,root,root) %{py_sitedir}/%{module}/sparse/*.so
 %{py_sitedir}/%{module}/sparse/*.py
@@ -255,15 +270,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py_sitedir}/%{module}/stats/*.so
 %{py_sitedir}/%{module}/stats/*.py
 %{py_sitedir}/%{module}/stats/*.py[co]
-%dir %{py_sitedir}/%{module}/weave
-%{py_sitedir}/%{module}/weave/*.py
-%{py_sitedir}/%{module}/weave/*.py[co]
-%{py_sitedir}/%{module}/weave/blitz
-%{py_sitedir}/%{module}/weave/scxx
 %if "%{py_ver}" > "2.4"
 %{py_sitedir}/%{module}-%{version}-py*.egg-info
 %endif
-%{_examplesdir}/%{name}-%{version}
 %endif
 
 %if %{with python3}
@@ -292,6 +301,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py3_sitedir}/%{module}/integrate/*.so
 %{py3_sitedir}/%{module}/integrate/*.py
 %{py3_sitedir}/%{module}/integrate/__pycache__
+%dir %{py3_sitedir}/%{module}/integrate/_ivp
+%{py3_sitedir}/%{module}/integrate/_ivp/*.py
+%{py3_sitedir}/%{module}/integrate/_ivp/__pycache__
 %dir %{py3_sitedir}/%{module}/interpolate
 %attr(755,root,root) %{py3_sitedir}/%{module}/interpolate/*.so
 %{py3_sitedir}/%{module}/interpolate/*.py
@@ -299,6 +311,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{py3_sitedir}/%{module}/io
 %{py3_sitedir}/%{module}/io/*.py
 %{py3_sitedir}/%{module}/io/__pycache__
+%attr(755,root,root) %{py3_sitedir}/%{module}/io/*.so
 %dir %{py3_sitedir}/%{module}/io/arff
 %{py3_sitedir}/%{module}/io/arff/*.py
 %{py3_sitedir}/%{module}/io/arff/__pycache__
@@ -312,6 +325,10 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{py3_sitedir}/%{module}/_lib
 %{py3_sitedir}/%{module}/_lib/*.py
 %{py3_sitedir}/%{module}/_lib/__pycache__
+%attr(755,root,root) %{py3_sitedir}/%{module}/_lib/_ccallback_c.*.so
+%attr(755,root,root) %{py3_sitedir}/%{module}/_lib/_fpumode.*.so
+%attr(755,root,root) %{py3_sitedir}/%{module}/_lib/_test_ccallback.*.so
+%attr(755,root,root) %{py3_sitedir}/%{module}/_lib/messagestream.*.so
 %dir %{py3_sitedir}/%{module}/linalg
  %{py3_sitedir}/%{module}/linalg/*.pxd
 %attr(755,root,root) %{py3_sitedir}/%{module}/linalg/*.so
@@ -338,10 +355,20 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py3_sitedir}/%{module}/optimize/_lsq/*.so
 %{py3_sitedir}/%{module}/optimize/_lsq/*.py
 %{py3_sitedir}/%{module}/optimize/_lsq/__pycache__
+%dir %{py3_sitedir}/%{module}/optimize/_trlib
+%attr(755,root,root) %{py3_sitedir}/%{module}/optimize/_trlib/*.so
+%{py3_sitedir}/%{module}/optimize/_trlib/*.py
+%{py3_sitedir}/%{module}/optimize/_trlib/__pycache__
+%dir %{py3_sitedir}/%{module}/optimize/_trustregion_constr
+%{py3_sitedir}/%{module}/optimize/_trustregion_constr/*.py
+%{py3_sitedir}/%{module}/optimize/_trustregion_constr/__pycache__
 %dir %{py3_sitedir}/%{module}/signal
 %attr(755,root,root) %{py3_sitedir}/%{module}/signal/*.so
 %{py3_sitedir}/%{module}/signal/*.py
 %{py3_sitedir}/%{module}/signal/__pycache__
+%dir %{py3_sitedir}/%{module}/signal/windows
+%{py3_sitedir}/%{module}/signal/windows/*.py
+%{py3_sitedir}/%{module}/signal/windows/__pycache__
 %dir %{py3_sitedir}/%{module}/sparse
 %attr(755,root,root) %{py3_sitedir}/%{module}/sparse/*.so
 %{py3_sitedir}/%{module}/sparse/*.py

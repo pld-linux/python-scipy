@@ -1,5 +1,7 @@
 # TODO:
+# - sphinx docs
 # - atlas support
+# - tests
 #
 # Conditional build:
 %bcond_without	python2 # CPython 2.x module
@@ -9,35 +11,37 @@
 Summary:	A library of scientific tools
 Summary(pl.UTF-8):	Biblioteka narzędzi naukowych
 Name:		python-%{module}
-Version:	1.1.0
-Release:	2
+Version:	1.2.2
+Release:	1
 License:	BSD
 Group:		Development/Languages/Python
+#Source0Download: https://github.com/scipy/scipy/releases/
 Source0:	https://github.com/scipy/scipy/releases/download/v%{version}/%{module}-%{version}.tar.gz
-# Source0-md5:	aa6bcc85276b6f25e17bcfc4dede8718
-URL:		http://www.scipy.org/
-BuildRequires:	rpmbuild(macros) >= 1.710
+# Source0-md5:	d94de858fba4f24de7d6dd16f1caeb5d
+URL:		https://www.scipy.org/
 BuildRequires:	UMFPACK-devel
-BuildRequires:	blas-devel
+BuildRequires:	blas-devel >= 3.6.0
 BuildRequires:	gcc-fortran
-BuildRequires:	lapack-devel
+BuildRequires:	lapack-devel >= 3.6.0
+BuildRequires:	rpmbuild(macros) >= 1.714
+BuildRequires:	swig-python
 %if %{with python2}
-BuildRequires:	f2py >= 1:1.5.1-3
-BuildRequires:	python
-BuildRequires:	python-devel >= 1:2.3
-BuildRequires:	python-numpy >= 1:1.5.1-3
-BuildRequires:	python-numpy-devel >= 1:1.5.1-3
-%pyrequires_eq	python-modules
+BuildRequires:	f2py >= 1:1.8.2
+BuildRequires:	python >= 1:2.7
+BuildRequires:	python-devel >= 1:2.7
+BuildRequires:	python-numpy >= 1:1.8.2
+BuildRequires:	python-numpy-devel >= 1:1.8.2
 %endif
 %if %{with python3}
-BuildRequires:	f2py3 >= 1:1.5.1-3
-BuildRequires:	python3
-BuildRequires:	python3-devel
-BuildRequires:	python3-distribute
-BuildRequires:	python3-numpy >= 1:1.5.1-3
-BuildRequires:	python3-numpy-devel >= 1:1.5.1-3
+BuildRequires:	f2py3 >= 1:1.8.2
+BuildRequires:	python3 >= 1:3.4
+BuildRequires:	python3-devel >= 1:3.4
+BuildRequires:	python3-numpy >= 1:1.8.2
+BuildRequires:	python3-numpy-devel >= 1:1.8.2
 %endif
-BuildRequires:	swig-python
+Requires:	lapack >= 3.6.0
+Requires:	python-modules >= 1:2.7
+Requires:	python-numpy >= 1:1.8.2
 Suggests:	python-PIL
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -56,7 +60,9 @@ pakiet.
 Summary:	A library of scientific tools
 Summary(pl.UTF-8):	Biblioteka narzędzi naukowych
 Group:		Libraries/Python
-%pyrequires_eq	python3-modules
+Requires:	lapack >= 3.6.0
+Requires:	python3-modules >= 1:3.4
+Requires:	python3-numpy >= 1:1.8.2
 
 %description -n python3-%{module}
 SciPy is an open source library of scientific tools for Python. SciPy
@@ -73,33 +79,22 @@ pakiet.
 %setup -q -n scipy-%{version}
 
 %build
+# numpy.distutils uses LDFLAGS as its own flags replacement,
+# instead of appending proper options (like -shared)
 CFLAGS="%{rpmcflags}"
-export CFLAGS
+LDFLAGS="%{rpmldflags} -shared"
+export CFLAGS LDFLAGS
+
 export BLAS=%{_libdir}
 export LAPACK=%{_libdir}
 export UMFPACK=%{_libdir}
 
 %if %{with python2}
-# %%py_build
-# exporting LDFLAGS breaks build, so open code macro:
-CFLAGS="${CFLAGS:-%rpmcppflags %rpmcflags}"; export CFLAGS; \
-CXXFLAGS="${CXXFLAGS:-%rpmcppflags %rpmcxxflags}"; export CXXFLAGS; \
-%{?__cc:CC="%{__cc}"; export CC;} \
-%{?__cxx:CXX="%{__cxx}"; export CXX;} \
-%{__python} setup.py \
-	build --build-base=build-2
-
+%py_build
 %endif
 
 %if %{with python3}
-# %%py3_build
-# exporting LDFLAGS breaks build, so open code macro:
-CFLAGS="${CFLAGS:-%rpmcppflags %rpmcflags}"; export CFLAGS; \
-CXXFLAGS="${CXXFLAGS:-%rpmcppflags %rpmcxxflags}"; export CXXFLAGS; \
-%{?__cc:CC="%{__cc}"; export CC;} \
-%{?__cxx:CXX="%{__cxx}"; export CXX;} \
-%{__python3} setup.py build \
-	--build-base=build-3
+%py3_build
 %endif
 
 %install
@@ -134,7 +129,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with python2}
 %files
 %defattr(644,root,root,755)
-%doc INSTALL.rst.txt doc/README.txt THANKS.txt
+%doc INSTALL.rst.txt LICENSE.txt THANKS.txt doc/{API.rst.txt,README.txt,ROADMAP.rst.txt}
 %dir %{py_sitedir}/%{module}
 %{py_sitedir}/%{module}/*.py
 %{py_sitedir}/%{module}/*.py[co]
@@ -186,12 +181,13 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py_sitedir}/%{module}/_lib/_test_ccallback.so
 %attr(755,root,root) %{py_sitedir}/%{module}/_lib/messagestream.so
 %dir %{py_sitedir}/%{module}/linalg
-%dir %{py_sitedir}/%{module}/linalg/*.pxd
+%{py_sitedir}/%{module}/linalg/*.pxd
 %attr(755,root,root) %{py_sitedir}/%{module}/linalg/*.so
 %{py_sitedir}/%{module}/linalg/*.py
 %{py_sitedir}/%{module}/linalg/*.py[co]
 %dir %{py_sitedir}/%{module}/misc
 %{py_sitedir}/%{module}/misc/ascent.dat
+%{py_sitedir}/%{module}/misc/ecg.dat
 %{py_sitedir}/%{module}/misc/face.dat
 %{py_sitedir}/%{module}/misc/*.py
 %{py_sitedir}/%{module}/misc/*.py[co]
@@ -211,6 +207,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py_sitedir}/%{module}/optimize/_lsq/*.so
 %{py_sitedir}/%{module}/optimize/_lsq/*.py
 %{py_sitedir}/%{module}/optimize/_lsq/*.py[co]
+%dir %{py_sitedir}/%{module}/optimize/_shgo_lib
+%{py_sitedir}/%{module}/optimize/_shgo_lib/*.py
+%{py_sitedir}/%{module}/optimize/_shgo_lib/*.py[co]
+%{py_sitedir}/%{module}/optimize/_shgo_lib/sobol_vec.gz
 %dir %{py_sitedir}/%{module}/optimize/_trlib
 %{py_sitedir}/%{module}/optimize/_trlib/*.py
 %{py_sitedir}/%{module}/optimize/_trlib/*.py[co]
@@ -218,7 +218,6 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{py_sitedir}/%{module}/optimize/_trustregion_constr
 %{py_sitedir}/%{module}/optimize/_trustregion_constr/*.py
 %{py_sitedir}/%{module}/optimize/_trustregion_constr/*.py[co]
-
 %dir %{py_sitedir}/%{module}/signal
 %attr(755,root,root) %{py_sitedir}/%{module}/signal/*.so
 %{py_sitedir}/%{module}/signal/*.py
@@ -259,8 +258,12 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py_sitedir}/%{module}/spatial/*.so
 %{py_sitedir}/%{module}/spatial/*.py
 %{py_sitedir}/%{module}/spatial/*.py[co]
+%dir %{py_sitedir}/%{module}/spatial/transform
+%{py_sitedir}/%{module}/spatial/transform/*.py
+%{py_sitedir}/%{module}/spatial/transform/*.py[co]
 %dir %{py_sitedir}/%{module}/special
 %attr(755,root,root) %{py_sitedir}/%{module}/special/*.so
+%{py_sitedir}/%{module}/special/*.pxd
 %{py_sitedir}/%{module}/special/*.py
 %{py_sitedir}/%{module}/special/*.py[co]
 %dir %{py_sitedir}/%{module}/special/_precompute
@@ -278,7 +281,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with python3}
 %files -n python3-%{module}
 %defattr(644,root,root,755)
-%doc INSTALL.rst.txt doc/README.txt THANKS.txt
+%doc INSTALL.rst.txt LICENSE.txt THANKS.txt doc/README.txt
 %dir %{py3_sitedir}/%{module}
 %{py3_sitedir}/%{module}/*.py
 %{py3_sitedir}/%{module}/__pycache__
@@ -330,12 +333,13 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py3_sitedir}/%{module}/_lib/_test_ccallback.*.so
 %attr(755,root,root) %{py3_sitedir}/%{module}/_lib/messagestream.*.so
 %dir %{py3_sitedir}/%{module}/linalg
- %{py3_sitedir}/%{module}/linalg/*.pxd
+%{py3_sitedir}/%{module}/linalg/*.pxd
 %attr(755,root,root) %{py3_sitedir}/%{module}/linalg/*.so
 %{py3_sitedir}/%{module}/linalg/*.py
 %{py3_sitedir}/%{module}/linalg/__pycache__
 %dir %{py3_sitedir}/%{module}/misc
 %{py3_sitedir}/%{module}/misc/ascent.dat
+%{py3_sitedir}/%{module}/misc/ecg.dat
 %{py3_sitedir}/%{module}/misc/face.dat
 %{py3_sitedir}/%{module}/misc/*.py
 %{py3_sitedir}/%{module}/misc/__pycache__
@@ -355,6 +359,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py3_sitedir}/%{module}/optimize/_lsq/*.so
 %{py3_sitedir}/%{module}/optimize/_lsq/*.py
 %{py3_sitedir}/%{module}/optimize/_lsq/__pycache__
+%dir %{py3_sitedir}/%{module}/optimize/_shgo_lib
+%{py3_sitedir}/%{module}/optimize/_shgo_lib/*.py
+%{py3_sitedir}/%{module}/optimize/_shgo_lib/__pycache__
+%{py3_sitedir}/%{module}/optimize/_shgo_lib/sobol_vec.gz
 %dir %{py3_sitedir}/%{module}/optimize/_trlib
 %attr(755,root,root) %{py3_sitedir}/%{module}/optimize/_trlib/*.so
 %{py3_sitedir}/%{module}/optimize/_trlib/*.py
@@ -402,9 +410,13 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py3_sitedir}/%{module}/spatial/*.so
 %{py3_sitedir}/%{module}/spatial/*.py
 %{py3_sitedir}/%{module}/spatial/__pycache__
+%dir %{py3_sitedir}/%{module}/spatial/transform
+%{py3_sitedir}/%{module}/spatial/transform/*.py
+%{py3_sitedir}/%{module}/spatial/transform/__pycache__
 %dir %{py3_sitedir}/%{module}/special
 %attr(755,root,root) %{py3_sitedir}/%{module}/special/*.so
 %{py3_sitedir}/%{module}/special/*.py
+%{py3_sitedir}/%{module}/special/*.pxd
 %{py3_sitedir}/%{module}/special/__pycache__
 %dir %{py3_sitedir}/%{module}/special/_precompute
 %{py3_sitedir}/%{module}/special/_precompute/*.py

@@ -19,12 +19,10 @@ Group:		Development/Languages/Python
 Source0:	https://github.com/scipy/scipy/releases/download/v%{version}/%{module}-%{version}.tar.gz
 # Source0-md5:	d94de858fba4f24de7d6dd16f1caeb5d
 URL:		https://www.scipy.org/
-BuildRequires:	UMFPACK-devel
 BuildRequires:	blas-devel >= 3.6.0
 BuildRequires:	gcc-fortran
 BuildRequires:	lapack-devel >= 3.6.0
 BuildRequires:	rpmbuild(macros) >= 1.714
-BuildRequires:	swig-python
 %if %{with python2}
 BuildRequires:	f2py >= 1:1.8.2
 BuildRequires:	python >= 1:2.7
@@ -87,7 +85,6 @@ export CFLAGS LDFLAGS
 
 export BLAS=%{_libdir}
 export LAPACK=%{_libdir}
-export UMFPACK=%{_libdir}
 
 %if %{with python2}
 %py_build
@@ -99,9 +96,9 @@ export UMFPACK=%{_libdir}
 
 %install
 rm -rf $RPM_BUILD_ROOT
+
 export BLAS=%{_libdir}
 export LAPACK=%{_libdir}
-export UMFPACK=%{_libdir}
 
 %if %{with python2}
 %py_install

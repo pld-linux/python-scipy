@@ -4,6 +4,7 @@
 # - tests
 #
 # Conditional build:
+%bcond_without	doc	# Sphinx documentation
 %bcond_without	python2 # CPython 2.x module
 %bcond_without	python3 # CPython 3.x module
 
@@ -36,6 +37,11 @@ BuildRequires:	python3 >= 1:3.4
 BuildRequires:	python3-devel >= 1:3.4
 BuildRequires:	python3-numpy >= 1:1.8.2
 BuildRequires:	python3-numpy-devel >= 1:1.8.2
+%endif
+%if %{with doc}
+# matplotlib.sphinxext.plot_directive.__version__ >= 2
+BuildRequires:	python3-matplotlib >= 1.1.0
+BuildRequires:	sphinx-pdg-3 >= 1.6
 %endif
 Requires:	lapack >= 3.6.0
 Requires:	python-modules >= 1:2.7
@@ -73,6 +79,17 @@ Pythona. SciPy uzupełnia popularny moduł numpy, gromadząc razem
 wiele wysokopoziomowych modułów naukowych i inżynierskich w jeden
 pakiet.
 
+%package apidocs
+Summary:	API documentation for SciPy module
+Summary(pl.UTF-8):	Dokumentacja API modułu SciPy
+Group:		Documentation
+
+%description apidocs
+API documentation for SciPy module.
+
+%description apidocs -l pl.UTF-8
+Dokumentacja API modułu SciPy.
+
 %prep
 %setup -q -n scipy-%{version}
 
@@ -92,6 +109,13 @@ export LAPACK=%{_libdir}
 
 %if %{with python3}
 %py3_build
+%endif
+
+%if %{with doc}
+LANG=C \
+PYTHONPATH=$(readlink -f build-3/lib.*) \
+%{__make} -C doc html \
+	SPHINXBUILD=sphinx-pdg-3
 %endif
 
 %install
@@ -423,4 +447,10 @@ rm -rf $RPM_BUILD_ROOT
 %{py3_sitedir}/%{module}/stats/*.py
 %{py3_sitedir}/%{module}/stats/__pycache__
 %{py3_sitedir}/%{module}-%{version}-py*.egg-info
+%endif
+
+%if %{with doc}
+%files apidocs
+%defattr(644,root,root,755)
+%doc doc/build/html/*
 %endif

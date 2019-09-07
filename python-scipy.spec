@@ -1,5 +1,4 @@
 # TODO:
-# - sphinx docs
 # - atlas support
 # - tests
 #
@@ -115,7 +114,7 @@ export LAPACK=%{_libdir}
 LANG=C \
 PYTHONPATH=$(readlink -f build-3/lib.*) \
 %{__make} -C doc html \
-	SPHINXBUILD=sphinx-pdg-3
+	SPHINXBUILD=sphinx-build-3
 %endif
 
 %install

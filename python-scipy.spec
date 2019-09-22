@@ -5,7 +5,7 @@
 # Conditional build:
 %bcond_without	doc	# Sphinx documentation
 %bcond_without	python2 # CPython 2.x module
-%bcond_without	python3 # CPython 3.x module
+%bcond_with	python3 # CPython 3.x module (see python3-scipy.spec for scipy >= 1.3 for Python 3.5+)
 
 %define		module	scipy
 Summary:	A library of scientific tools
@@ -293,9 +293,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py_sitedir}/%{module}/stats/*.so
 %{py_sitedir}/%{module}/stats/*.py
 %{py_sitedir}/%{module}/stats/*.py[co]
-%if "%{py_ver}" > "2.4"
 %{py_sitedir}/%{module}-%{version}-py*.egg-info
-%endif
 %endif
 
 %if %{with python3}

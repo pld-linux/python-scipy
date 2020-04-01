@@ -47,7 +47,7 @@ BuildRequires:	sphinx-pdg-2 >= 1.6
 Requires:	lapack >= 3.6.0
 Requires:	python-modules >= 1:2.7
 Requires:	python-numpy >= 1:1.8.2
-Suggests:	python-PIL
+Suggests:	python-pillow
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -68,6 +68,7 @@ Group:		Libraries/Python
 Requires:	lapack >= 3.6.0
 Requires:	python3-modules >= 1:3.4
 Requires:	python3-numpy >= 1:1.8.2
+Suggests:	python3-pillow
 
 %description -n python3-%{module}
 SciPy is an open source library of scientific tools for Python. SciPy

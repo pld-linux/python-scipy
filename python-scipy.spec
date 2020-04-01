@@ -11,18 +11,20 @@
 Summary:	A library of scientific tools
 Summary(pl.UTF-8):	Biblioteka narzędzi naukowych
 Name:		python-%{module}
-Version:	1.2.2
-Release:	4
+Version:	1.2.3
+Release:	1
 License:	BSD
 Group:		Development/Languages/Python
 #Source0Download: https://github.com/scipy/scipy/releases/
-Source0:	https://github.com/scipy/scipy/releases/download/v%{version}/%{module}-%{version}.tar.gz
-# Source0-md5:	d94de858fba4f24de7d6dd16f1caeb5d
+Source0:	https://github.com/scipy/scipy/releases/download/v%{version}/%{module}-%{version}.tar.xz
+# Source0-md5:	561ee26a6d0a9b31d644db5e8244bc76
 URL:		https://www.scipy.org/
 BuildRequires:	blas-devel >= 3.6.0
 BuildRequires:	gcc-fortran
 BuildRequires:	lapack-devel >= 3.6.0
 BuildRequires:	rpmbuild(macros) >= 1.714
+BuildRequires:	tar >= 1:1.22
+BuildRequires:	xz
 %if %{with python2}
 BuildRequires:	f2py >= 1:1.8.2
 BuildRequires:	python >= 1:2.7
@@ -39,8 +41,8 @@ BuildRequires:	python3-numpy-devel >= 1:1.8.2
 %endif
 %if %{with doc}
 # matplotlib.sphinxext.plot_directive.__version__ >= 2
-BuildRequires:	python3-matplotlib >= 1.1.0
-BuildRequires:	sphinx-pdg-3 >= 1.6
+BuildRequires:	python-matplotlib >= 1.1.0
+BuildRequires:	sphinx-pdg-2 >= 1.6
 %endif
 Requires:	lapack >= 3.6.0
 Requires:	python-modules >= 1:2.7
@@ -112,9 +114,9 @@ export LAPACK=%{_libdir}
 
 %if %{with doc}
 LANG=C \
-PYTHONPATH=$(readlink -f build-3/lib.*) \
+PYTHONPATH=$(readlink -f build-2/lib.*) \
 %{__make} -C doc html \
-	SPHINXBUILD=sphinx-build-3
+	SPHINXBUILD=sphinx-build-2
 %endif
 
 %install
@@ -127,6 +129,10 @@ export LAPACK=%{_libdir}
 %py_install
 
 %{__rm} $RPM_BUILD_ROOT%{py_sitedir}/%{module}/*.txt
+%{__rm} $RPM_BUILD_ROOT%{py_sitedir}/%{module}/linalg/src/{id_dist/doc/doc.tex,lapack_deprecations/LICENSE}
+%{__rm} $RPM_BUILD_ROOT%{py_sitedir}/%{module}/optimize/lbfgsb_src/README
+%{__rm} $RPM_BUILD_ROOT%{py_sitedir}/%{module}/sparse/linalg/{dsolve/SuperLU/License.txt,eigen/arpack/ARPACK/COPYING}
+%{__rm} $RPM_BUILD_ROOT%{py_sitedir}/%{module}/spatial/qhull_src/COPYING.txt
 %{__rm} -r $RPM_BUILD_ROOT%{py_sitedir}/%{module}/*/tests
 %{__rm} -r $RPM_BUILD_ROOT%{py_sitedir}/%{module}/*/*/tests
 %{__rm} -r $RPM_BUILD_ROOT%{py_sitedir}/%{module}/*/*/*/tests
@@ -137,6 +143,10 @@ export LAPACK=%{_libdir}
 %py3_install
 
 %{__rm} $RPM_BUILD_ROOT%{py3_sitedir}/%{module}/*.txt
+%{__rm} $RPM_BUILD_ROOT%{py3_sitedir}/%{module}/linalg/src/{id_dist/doc/doc.tex,lapack_deprecations/LICENSE}
+%{__rm} $RPM_BUILD_ROOT%{py3_sitedir}/%{module}/optimize/lbfgsb_src/README
+%{__rm} $RPM_BUILD_ROOT%{py3_sitedir}/%{module}/sparse/linalg/{dsolve/SuperLU/License.txt,eigen/arpack/ARPACK/COPYING}
+%{__rm} $RPM_BUILD_ROOT%{py3_sitedir}/%{module}/spatial/qhull_src/COPYING.txt
 %{__rm} -r $RPM_BUILD_ROOT%{py3_sitedir}/%{module}/*/tests
 %{__rm} -r $RPM_BUILD_ROOT%{py3_sitedir}/%{module}/*/*/tests
 %{__rm} -r $RPM_BUILD_ROOT%{py3_sitedir}/%{module}/*/*/*/tests

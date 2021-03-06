@@ -22,7 +22,7 @@ URL:		https://www.scipy.org/
 BuildRequires:	blas-devel >= 3.6.0
 BuildRequires:	gcc-fortran
 BuildRequires:	lapack-devel >= 3.6.0
-BuildRequires:	rpmbuild(macros) >= 1.714
+BuildRequires:	rpmbuild(macros) >= 1.750
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
 %if %{with python2}
@@ -100,7 +100,10 @@ Dokumentacja API modułu SciPy.
 # instead of appending proper options (like -shared)
 CFLAGS="%{rpmcflags}"
 LDFLAGS="%{rpmldflags} -shared"
-export CFLAGS LDFLAGS
+%if %{_ver_ge %(rpm -q --qf='%%{VERSION}' gcc-fortran) 10}
+FFLAGS="-fallow-argument-mismatch"
+%endif
+export CFLAGS LDFLAGS FFLAGS
 
 export BLAS=%{_libdir}
 export LAPACK=%{_libdir}

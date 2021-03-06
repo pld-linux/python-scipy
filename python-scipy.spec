@@ -100,8 +100,9 @@ Dokumentacja API modułu SciPy.
 # instead of appending proper options (like -shared)
 CFLAGS="%{rpmcflags}"
 LDFLAGS="%{rpmldflags} -shared"
+FFLAGS="-fPIC"
 %if %{_ver_ge %(rpm -q --qf='%%{VERSION}' gcc-fortran) 10}
-FFLAGS="-fallow-argument-mismatch"
+FFLAGS="$FFLAGS -fallow-argument-mismatch"
 %endif
 export CFLAGS LDFLAGS FFLAGS
 

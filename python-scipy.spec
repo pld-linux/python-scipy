@@ -11,6 +11,7 @@
 Summary:	A library of scientific tools
 Summary(pl.UTF-8):	Biblioteka narzędzi naukowych
 Name:		python-%{module}
+# keep 1.2.x here for python2 support
 Version:	1.2.3
 Release:	3
 License:	BSD
